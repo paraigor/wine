@@ -1,6 +1,24 @@
+import datetime as dt
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
+import pandas
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+
+def get_age_since(establish_year):
+    establish_date = dt.date(establish_year, 1, 1)
+    time_passed = dt.date.today() - establish_date
+    years = int(time_passed.days / 365.25)
+
+    if years % 100 != 11 and years % 10 == 1:
+        years_name = "год"
+    elif years % 100 not in [12, 13, 14] and years % 10 in [2, 3, 4]:
+        years_name = "года"
+    else:
+        years_name = "лет"
+
+    return f"{years} {years_name}"
+
 
 env = Environment(
     loader=FileSystemLoader("."), autoescape=select_autoescape(["html", "xml"])
@@ -8,13 +26,13 @@ env = Environment(
 
 template = env.get_template("template.html")
 
+wines = pandas.read_excel(
+    "wine.xlsx", na_values=" ", keep_default_na=False
+).to_dict(orient="records")
+
 rendered_page = template.render(
-    cap1_title="Красная кепка",
-    cap1_text="$ 100.00",
-    cap2_title="Чёрная кепка",
-    cap2_text="$ 120.00",
-    cap3_title="Ещё одна чёрная кепка",
-    cap3_text="$ 90.00",
+    age=get_age_since(1920),
+    wines=wines,
 )
 
 with open("index.html", "w", encoding="utf8") as file:
