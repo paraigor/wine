@@ -21,28 +21,34 @@ def get_age_since(establish_year):
     return f"{years} {years_name}"
 
 
-env = Environment(
-    loader=FileSystemLoader("."), autoescape=select_autoescape(["html", "xml"])
-)
+def main():
+    env = Environment(
+        loader=FileSystemLoader("."),
+        autoescape=select_autoescape(["html", "xml"]),
+    )
 
-template = env.get_template("template.html")
+    template = env.get_template("template.html")
 
-wines = pandas.read_excel(
-    "wine3.xlsx", na_values=" ", keep_default_na=False
-).to_dict(orient="records")
+    wines = pandas.read_excel(
+        "wine3.xlsx", na_values=" ", keep_default_na=False
+    ).to_dict(orient="records")
 
-wines_categorised = collections.defaultdict(list)
+    wines_categorised = collections.defaultdict(list)
 
-for wine in wines:
+    for wine in wines:
         wines_categorised[wine["Категория"]].append(wine)
 
-rendered_page = template.render(
-    age=get_age_since(1920),
-    wines_categorised=wines_categorised,
-)
+    rendered_page = template.render(
+        age=get_age_since(1920),
+        wines_categorised=wines_categorised,
+    )
 
-with open("index.html", "w", encoding="utf8") as file:
-    file.write(rendered_page)
+    with open("index.html", "w", encoding="utf8") as file:
+        file.write(rendered_page)
 
-server = HTTPServer(("0.0.0.0", 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+    server = HTTPServer(("0.0.0.0", 8000), SimpleHTTPRequestHandler)
+    server.serve_forever()
+
+
+if __name__ == "__main__":
+    main()
