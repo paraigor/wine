@@ -1,3 +1,4 @@
+import collections
 import datetime as dt
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
@@ -27,12 +28,17 @@ env = Environment(
 template = env.get_template("template.html")
 
 wines = pandas.read_excel(
-    "wine.xlsx", na_values=" ", keep_default_na=False
+    "wine3.xlsx", na_values=" ", keep_default_na=False
 ).to_dict(orient="records")
+
+wines_categorised = collections.defaultdict(list)
+
+for wine in wines:
+        wines_categorised[wine["Категория"]].append(wine)
 
 rendered_page = template.render(
     age=get_age_since(1920),
-    wines=wines,
+    wines_categorised=wines_categorised,
 )
 
 with open("index.html", "w", encoding="utf8") as file:
