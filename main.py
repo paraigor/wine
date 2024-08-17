@@ -30,7 +30,7 @@ def main():
     template = env.get_template("template.html")
 
     wines = pandas.read_excel(
-        "wine3.xlsx", na_values=" ", keep_default_na=False
+        "wine.xlsx", na_values=" ", keep_default_na=False
     ).to_dict(orient="records")
 
     wines_categorised = collections.defaultdict(list)
