@@ -10,10 +10,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 def get_age_since(establish_year):
-    establish_date = dt.date(establish_year, 1, 1)
-    time_passed = dt.date.today() - establish_date
-    avg_days_in_year = 365.25
-    years = int(time_passed.days / avg_days_in_year)
+    years = dt.date.today().year - establish_year
 
     if years % 100 != 11 and years % 10 == 1:
         years_name = "год"
